@@ -1,0 +1,22 @@
+﻿@{
+    Layout = "_Layout";
+}
+
+@* @{
+    if(User.IsInRole("dmin"))
+    {
+        Layout = "_AdminLayout";
+    }
+    else if(User.IsInRole("manager"))
+    {
+        Layout = "_ManagerLayout";
+    }
+    else if(User.IsInRole("employee"))
+    {
+        Layout = "_EmployeeLayout";
+    }
+    else
+    {
+        Layout = "_Layout";
+    }
+} *@

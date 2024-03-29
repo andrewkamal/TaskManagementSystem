@@ -1,0 +1,11 @@
+﻿.btn {
+    width:75px;
+}
+.imageThumbnail {
+    height: 250px;
+    width: auto;
+}
+.adjustCards{
+    min-width: 18rem;
+    max-width: 18.35rem;
+}
