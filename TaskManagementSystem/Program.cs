@@ -4,9 +4,12 @@ using TaskManagementSystem.Models;
 using NLog.Extensions.Logging;
 using NLog.Web;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.AspNetCore.Authorization;
 
 var builder = WebApplication.CreateBuilder(args);
 var config = builder.Configuration;
+
 
 builder.Services.AddLogging(logging =>
 {
@@ -18,10 +21,17 @@ builder.Services.AddLogging(logging =>
 });
 
 builder.Services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<TMSDbContext>();
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews(options =>
+{
+    var policy = new AuthorizationPolicyBuilder()
+                     .RequireAuthenticatedUser()
+                     .Build();
+    options.Filters.Add(new AuthorizeFilter(policy));
+});
 builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 builder.Services.AddDbContextPool<TMSDbContext>(options =>
 options.UseSqlServer(config.GetConnectionString("DefaultConnection")));
+
 
 var app = builder.Build();
 
@@ -35,8 +45,9 @@ else
 
 app.UseCors("AllowAll");
 app.UseStaticFiles();
-app.UseAuthentication();
 app.UseRouting();
+app.UseAuthentication();
+app.UseAuthorization();
 app.MapControllerRoute(name: "default", pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();

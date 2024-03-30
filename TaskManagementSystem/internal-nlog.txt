@@ -126,3 +126,31 @@
 2024-03-29 22:15:39.0141 Info NLog, Version=5.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 5.2.8.2366. Product version: 5.2.8+f586f1341c46fa38aaaff4c641e7f0fa7e813943. GlobalAssemblyCache: False
 2024-03-29 22:15:39.0217 Info Validating config: TargetNames=allfile, ConfigItems=18, FilePath=C:\Users\andre\OneDrive\Desktop\Projects\Full Stack\TaskManagementSystem\TaskManagementSystem\bin\Debug\net8.0\NLog.config
 2024-03-29 22:15:39.0217 Info Configuration initialized.
+2024-03-30 00:16:12.9108 Info Registered target NLog.Targets.FileTarget(Name=allfile)
+2024-03-30 00:16:12.9297 Info NLog, Version=5.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 5.2.8.2366. Product version: 5.2.8+f586f1341c46fa38aaaff4c641e7f0fa7e813943. GlobalAssemblyCache: False
+2024-03-30 00:16:12.9297 Info Validating config: TargetNames=allfile, ConfigItems=18, FilePath=C:\Users\andre\OneDrive\Desktop\Projects\Full Stack\TaskManagementSystem\TaskManagementSystem\bin\Debug\net8.0\NLog.config
+2024-03-30 00:16:12.9426 Info Configuration initialized.
+2024-03-30 00:16:40.2281 Info Registered target NLog.Targets.FileTarget(Name=allfile)
+2024-03-30 00:16:40.2509 Info NLog, Version=5.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 5.2.8.2366. Product version: 5.2.8+f586f1341c46fa38aaaff4c641e7f0fa7e813943. GlobalAssemblyCache: False
+2024-03-30 00:16:40.2579 Info Validating config: TargetNames=allfile, ConfigItems=18, FilePath=C:\Users\andre\OneDrive\Desktop\Projects\Full Stack\TaskManagementSystem\TaskManagementSystem\bin\Debug\net8.0\NLog.config
+2024-03-30 00:16:40.2689 Info Configuration initialized.
+2024-03-30 00:17:34.1132 Info Registered target NLog.Targets.FileTarget(Name=allfile)
+2024-03-30 00:17:34.1464 Info NLog, Version=5.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 5.2.8.2366. Product version: 5.2.8+f586f1341c46fa38aaaff4c641e7f0fa7e813943. GlobalAssemblyCache: False
+2024-03-30 00:17:34.1464 Info Validating config: TargetNames=allfile, ConfigItems=18, FilePath=C:\Users\andre\OneDrive\Desktop\Projects\Full Stack\TaskManagementSystem\TaskManagementSystem\bin\Debug\net8.0\NLog.config
+2024-03-30 00:17:34.1642 Info Configuration initialized.
+2024-03-30 00:20:08.6318 Info Registered target NLog.Targets.FileTarget(Name=allfile)
+2024-03-30 00:20:08.6633 Info NLog, Version=5.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 5.2.8.2366. Product version: 5.2.8+f586f1341c46fa38aaaff4c641e7f0fa7e813943. GlobalAssemblyCache: False
+2024-03-30 00:20:08.6633 Info Validating config: TargetNames=allfile, ConfigItems=18, FilePath=C:\Users\andre\OneDrive\Desktop\Projects\Full Stack\TaskManagementSystem\TaskManagementSystem\bin\Debug\net8.0\NLog.config
+2024-03-30 00:20:08.6781 Info Configuration initialized.
+2024-03-30 00:22:10.4129 Info Registered target NLog.Targets.FileTarget(Name=allfile)
+2024-03-30 00:22:10.4318 Info NLog, Version=5.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 5.2.8.2366. Product version: 5.2.8+f586f1341c46fa38aaaff4c641e7f0fa7e813943. GlobalAssemblyCache: False
+2024-03-30 00:22:10.4318 Info Validating config: TargetNames=allfile, ConfigItems=18, FilePath=C:\Users\andre\OneDrive\Desktop\Projects\Full Stack\TaskManagementSystem\TaskManagementSystem\bin\Debug\net8.0\NLog.config
+2024-03-30 00:22:10.4449 Info Configuration initialized.
+2024-03-30 13:45:15.1064 Info Registered target NLog.Targets.FileTarget(Name=allfile)
+2024-03-30 13:45:15.1607 Info NLog, Version=5.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 5.2.8.2366. Product version: 5.2.8+f586f1341c46fa38aaaff4c641e7f0fa7e813943. GlobalAssemblyCache: False
+2024-03-30 13:45:15.1607 Info Validating config: TargetNames=allfile, ConfigItems=18, FilePath=C:\Users\andre\OneDrive\Desktop\Projects\Full Stack\TaskManagementSystem\TaskManagementSystem\bin\Debug\net8.0\NLog.config
+2024-03-30 13:45:15.1743 Info Configuration initialized.
+2024-03-30 14:08:16.2383 Info Registered target NLog.Targets.FileTarget(Name=allfile)
+2024-03-30 14:08:16.2710 Info NLog, Version=5.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 5.2.8.2366. Product version: 5.2.8+f586f1341c46fa38aaaff4c641e7f0fa7e813943. GlobalAssemblyCache: False
+2024-03-30 14:08:16.2710 Info Validating config: TargetNames=allfile, ConfigItems=18, FilePath=C:\Users\andre\OneDrive\Desktop\Projects\Full Stack\TaskManagementSystem\TaskManagementSystem\bin\Debug\net8.0\NLog.config
+2024-03-30 14:08:16.2848 Info Configuration initialized.

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using TaskManagementSystem.ViewModels;
 
@@ -17,11 +18,13 @@ namespace TaskManagementSystem.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public IActionResult Register()
         {
             return View();
         }
         [HttpPost]
+        [AllowAnonymous]
         public async Task<IActionResult> Register(RegisterUserDTO model)
         {
             if (ModelState.IsValid)
@@ -43,12 +46,14 @@ namespace TaskManagementSystem.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public IActionResult Login()
         {
             return View();
         }
         [HttpPost]
-        public async Task<IActionResult> Login(LoginDTO model)
+        [AllowAnonymous]
+        public async Task<IActionResult> Login(LoginDTO model, string returnUrl)
         {
             if (ModelState.IsValid)
             {
@@ -56,7 +61,12 @@ namespace TaskManagementSystem.Controllers
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User logged in.");
-                    return RedirectToAction("Index", "Home");
+                    if(!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+                    {
+                        return Redirect(returnUrl);
+                    }
+                    else
+                        return RedirectToAction("Index", "Home");
                 }
                 ModelState.AddModelError(string.Empty, "Invalid login attempt.");
                 _logger.LogWarning("Invalid login attempt.");

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using TaskManagementSystem.Models;
 using TaskManagementSystem.ViewModels;
 namespace TaskManagementSystem.Controllers
@@ -39,11 +40,13 @@ namespace TaskManagementSystem.Controllers
             return View(model);
         }
         [HttpGet]
+        [Authorize]
         public IActionResult Create() 
         {           
             return View();
         }
         [HttpPost]
+        [Authorize]
         public IActionResult Create(EmployeeCreateDTO employee)
         {
             if (ModelState.IsValid)
@@ -62,6 +65,7 @@ namespace TaskManagementSystem.Controllers
             return View();
         }
         [HttpGet]
+        [Authorize]
         public IActionResult Edit(int id)
         {
             Employee employee = _employeeRepository.GetEmployee(id);
@@ -76,6 +80,7 @@ namespace TaskManagementSystem.Controllers
             return View(model);
         }
         [HttpPost]
+        [Authorize]
         public IActionResult Edit(UpdateEmployeeDTO employee)
         {
             if (ModelState.IsValid)
