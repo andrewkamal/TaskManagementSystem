@@ -23,6 +23,18 @@ namespace TaskManagementSystem.Controllers
         {
             return View();
         }
+
+        [AcceptVerbs("Get", "Post")]
+        [AllowAnonymous]
+        public async Task<IActionResult> IsEmailInUse(RegisterUserDTO model)
+        {
+            var user = await _userManager.FindByEmailAsync(model.Email);
+            if (user == null)
+                return Json(true);
+            else
+                return Json($"Email {model.Email} is already in use.");
+        }
+
         [HttpPost]
         [AllowAnonymous]
         public async Task<IActionResult> Register(RegisterUserDTO model)
@@ -47,29 +59,32 @@ namespace TaskManagementSystem.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        public IActionResult Login()
+        public IActionResult Login(string ReturnUrl)
         {
+            ViewData["ReturnUrl"] = ReturnUrl;
             return View();
         }
         [HttpPost]
         [AllowAnonymous]
-        public async Task<IActionResult> Login(LoginDTO model, string returnUrl)
+        public async Task<IActionResult> Login(LoginDTO model, string ReturnUrl)
         {
             if (ModelState.IsValid)
             {
-                var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, lockoutOnFailure: false);
+                var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, false);
                 if (result.Succeeded)
                 {
-                    _logger.LogInformation("User logged in.");
-                    if(!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+                    if (!string.IsNullOrEmpty(ReturnUrl) && Url.IsLocalUrl(ReturnUrl))
                     {
-                        return Redirect(returnUrl);
+                        _logger.LogInformation("User logged in.");
+                        return Redirect(ReturnUrl);
                     }
                     else
+                    {
+                        _logger.LogInformation("User logged in.");
                         return RedirectToAction("Index", "Home");
+                    }
                 }
                 ModelState.AddModelError(string.Empty, "Invalid login attempt.");
-                _logger.LogWarning("Invalid login attempt.");
             }
             return View(model);
         }

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 
 namespace TaskManagementSystem.ViewModels
 {
@@ -6,6 +7,7 @@ namespace TaskManagementSystem.ViewModels
     {
         [Required]
         [EmailAddress]
+        [Remote(action: "IsEmailInUse", controller:"Account")]
         public string Email { get; set; }
 
         [Required]

@@ -6,6 +6,7 @@ using NLog.Web;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
 var config = builder.Configuration;
@@ -31,6 +32,11 @@ builder.Services.AddControllersWithViews(options =>
 builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 builder.Services.AddDbContextPool<TMSDbContext>(options =>
 options.UseSqlServer(config.GetConnectionString("DefaultConnection")));
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/Account/Login";
+    });
 
 
 var app = builder.Build();
