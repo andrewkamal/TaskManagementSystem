@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
+using TaskManagementSystem.Models;
 
 namespace TaskManagementSystem.ViewModels
 {
@@ -18,5 +19,7 @@ namespace TaskManagementSystem.ViewModels
         [Display(Name = "Confirm password")]
         [Compare("Password", ErrorMessage = "Password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; }
+        public Dept Department { get; set; }
+        public IFormFile Photo { get; set; }
     }
 }

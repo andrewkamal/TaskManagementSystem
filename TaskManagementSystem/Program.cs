@@ -21,7 +21,7 @@ builder.Services.AddLogging(logging =>
     logging.AddNLog();
 });
 
-builder.Services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<TMSDbContext>();
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<TMSDbContext>();
 builder.Services.AddControllersWithViews(options =>
 {
     var policy = new AuthorizationPolicyBuilder()
@@ -29,7 +29,10 @@ builder.Services.AddControllersWithViews(options =>
                      .Build();
     options.Filters.Add(new AuthorizeFilter(policy));
 });
-builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+
+builder.Services.AddScoped<ITaskRepository, TaskRepository>();
+builder.Services.AddScoped<ICommentRepository, CommentRepository>();
+
 builder.Services.AddDbContextPool<TMSDbContext>(options =>
 options.UseSqlServer(config.GetConnectionString("DefaultConnection")));
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)

@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using TaskManagementSystem.Models;
 using TaskManagementSystem.ViewModels;
 
 namespace TaskManagementSystem.Controllers
@@ -10,12 +12,14 @@ namespace TaskManagementSystem.Controllers
     {
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly ILogger<AdministrationController> _logger;
-        private readonly UserManager<IdentityUser> _userManager;
-        public AdministrationController(RoleManager<IdentityRole> roleManager, ILogger<AdministrationController> logger, UserManager<IdentityUser> userManager)
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IWebHostEnvironment _webHostEnvironment;
+        public AdministrationController(RoleManager<IdentityRole> roleManager, ILogger<AdministrationController> logger, UserManager<ApplicationUser> userManager, IWebHostEnvironment webHostEnvironment)
         {
             _roleManager = roleManager;
             _logger = logger;
             _userManager = userManager;
+            _webHostEnvironment = webHostEnvironment;
 
         }
 
@@ -116,9 +120,13 @@ namespace TaskManagementSystem.Controllers
         }
 
         [HttpGet]
-        public IActionResult ListUsers()
+        public IActionResult ListUsers(string search)
         {
             var users = _userManager.Users;
+            if (!String.IsNullOrEmpty(search))
+            {
+                users = users.Where(u => u.UserName.Contains(search));
+            }
             return View(users);
         }
 
@@ -138,6 +146,8 @@ namespace TaskManagementSystem.Controllers
                 Id = user.Id,
                 Email = user.Email,
                 UserName = user.UserName,
+                Department = user.Department,
+                ExistingPhotoPath = user.PhotoPath,
                 Roles = userRoles,
                 Claims = userClaims.Select(c => c.Value).ToList()
             };
@@ -155,8 +165,11 @@ namespace TaskManagementSystem.Controllers
             }
             else
             {
+                string FileName = FileProcessing(model);
                 user.Email = model.Email;
                 user.UserName = model.UserName;
+                user.Department = model.Department;
+                user.PhotoPath = FileName;
                 var result = await _userManager.UpdateAsync(user);
                 if (result.Succeeded)
                 {
@@ -168,6 +181,23 @@ namespace TaskManagementSystem.Controllers
                 }
                 return View(model);
             }
+        }
+
+        private string FileProcessing(EditUserDTO model)
+        {
+            string FileName = string.Empty;
+            if (model.Photo != null)
+            {
+                string UploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "images");
+                FileName = Guid.NewGuid().ToString() + "_" + model.Photo.FileName;
+                string FilePath = Path.Combine(UploadsFolder, FileName);
+                using (var fileStream = new FileStream(FilePath, FileMode.Create))
+                {
+                    model.Photo.CopyTo(fileStream);
+                }
+                _logger.LogInformation($"File {FileName} uploaded");
+            }
+            return FileName;
         }
 
         [HttpGet]
@@ -199,9 +229,13 @@ namespace TaskManagementSystem.Controllers
             return View(model);
         }
         [HttpGet]
-        public IActionResult ListRoles()
+        public IActionResult ListRoles(string search)
         {
             var roles = _roleManager.Roles;
+            if (!String.IsNullOrEmpty(search))
+            {
+                roles = roles.Where(r => r.Name.Contains(search));
+            }
             return View(roles);
         }
         [HttpGet]

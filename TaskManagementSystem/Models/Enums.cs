@@ -7,4 +7,11 @@
         IT,
         Payroll
     }
+
+    public enum Status
+    {
+        Todo,
+        InProgress,
+        Completed
+    }
 }

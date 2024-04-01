@@ -1,8 +1,19 @@
-﻿@model IEnumerable<IdentityUser>
+﻿@model IEnumerable<ApplicationUser>
 @{
     ViewBag.Title = "List Users";
 }
 <h1>All Users</h1>
+
+<div class="container my-3">
+    <div class="row">
+        <form method="get" class="input-group">
+            <input type="text" class="form-control" name="search" placeholder="Search Users">
+            <div class="input-group-append">
+                <button type="submit" class="btn btn-primary">Search</button>
+            </div>
+        </form>
+    </div>
+</div>
 
 @if (Model.Any())
 {

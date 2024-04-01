@@ -2,19 +2,23 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using TaskManagementSystem.ViewModels;
+using TaskManagementSystem.Models;
+using Microsoft.AspNetCore.Hosting;
 
 namespace TaskManagementSystem.Controllers
 {
     public class AccountController : Controller
     {
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly ILogger<AccountController> _logger;
-        public AccountController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, ILogger<AccountController> logger)
+        private readonly IWebHostEnvironment _webHostEnvironment;
+        public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, ILogger<AccountController> logger, IWebHostEnvironment webHostEnvironment)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         [HttpGet]
@@ -41,7 +45,13 @@ namespace TaskManagementSystem.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = new IdentityUser { UserName = model.Email, Email = model.Email };
+                string FileName = FileProcessing(model);
+                var user = new ApplicationUser { 
+                    UserName = model.Email, 
+                    Email = model.Email, 
+                    Department= model.Department, 
+                    PhotoPath= FileName
+                };
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
@@ -61,11 +71,31 @@ namespace TaskManagementSystem.Controllers
             return View(model);
         }
 
+        private string FileProcessing(RegisterUserDTO model)
+        {
+            string FileName = string.Empty;
+            if (model.Photo != null)
+            {
+                string UploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "images");
+                FileName = Guid.NewGuid().ToString() + "_" + model.Photo.FileName;
+                string FilePath = Path.Combine(UploadsFolder, FileName);
+                using (var fileStream = new FileStream(FilePath, FileMode.Create))
+                {
+                    model.Photo.CopyTo(fileStream);
+                }
+                _logger.LogInformation($"File {FileName} uploaded");
+            }
+            return FileName;
+        }
+
         [HttpGet]
         [AllowAnonymous]
         public IActionResult Login(string ReturnUrl)
         {
-            ViewData["ReturnUrl"] = ReturnUrl;
+            if (!string.IsNullOrEmpty(ReturnUrl) && Url.IsLocalUrl(ReturnUrl))
+                ViewData["ReturnUrl"] = ReturnUrl;
+            else
+                ViewData["ReturnUrl"] = "Home/Index";
             return View();
         }
         [HttpPost]

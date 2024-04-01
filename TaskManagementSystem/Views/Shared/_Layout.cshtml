@@ -1,4 +1,4 @@
-﻿@inject SignInManager<IdentityUser> signInManager
+﻿@inject SignInManager<ApplicationUser> signInManager
 
 <!DOCTYPE html>
 <html>
@@ -27,11 +27,14 @@
                     <li class="nav-item">
                         <a class="nav-link" asp-controller="home" asp-action="index">Home</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" asp-controller="home" asp-action="create">Create</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" asp-controller="home" asp-action="add">Add</a>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Tasks</a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                            <a class="dropdown-item" asp-controller="Task" asp-action="Create">Create</a>
+                            <a class="dropdown-item" asp-controller="Task" asp-action="ListRoles">Manage</a>
+                            <a class="dropdown-item" asp-controller="Task" asp-action="View">View</a>
+                            <a class="dropdown-item" asp-controller="Task" asp-action="All">All</a>
+                        </div>
                     </li>
                     @if(signInManager.IsSignedIn(User) && User.IsInRole("Admin"))
                     {
