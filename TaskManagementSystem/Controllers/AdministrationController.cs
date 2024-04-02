@@ -87,6 +87,12 @@ namespace TaskManagementSystem.Controllers
                 ViewBag.ErrorMessage = $"User with Id = {id} cannot be found";
                 return View("NotFound");
             }
+            string FilePath = Path.Combine(_webHostEnvironment.WebRootPath, "images", user.PhotoPath);
+            if (System.IO.File.Exists(FilePath))
+            {
+                System.IO.File.Delete(FilePath);
+                _logger.LogWarning($"File {user.PhotoPath} deleted");
+            }
             var result = await _userManager.DeleteAsync(user);
             if (result.Succeeded)
             {
@@ -146,6 +152,7 @@ namespace TaskManagementSystem.Controllers
                 Id = user.Id,
                 Email = user.Email,
                 UserName = user.UserName,
+                Name = user.Name,
                 Department = user.Department,
                 ExistingPhotoPath = user.PhotoPath,
                 Roles = userRoles,
@@ -165,9 +172,19 @@ namespace TaskManagementSystem.Controllers
             }
             else
             {
+                if (model.Photo != null)
+                {
+                    string FilePath = Path.Combine(_webHostEnvironment.WebRootPath, "images", user.PhotoPath);
+                    if (System.IO.File.Exists(FilePath))
+                    {
+                        System.IO.File.Delete(FilePath);
+                        _logger.LogWarning($"File {user.PhotoPath} deleted");
+                    }
+                }
                 string FileName = FileProcessing(model);
                 user.Email = model.Email;
                 user.UserName = model.UserName;
+                user.Name = model.Name;
                 user.Department = model.Department;
                 user.PhotoPath = FileName;
                 var result = await _userManager.UpdateAsync(user);
@@ -195,7 +212,7 @@ namespace TaskManagementSystem.Controllers
                 {
                     model.Photo.CopyTo(fileStream);
                 }
-                _logger.LogInformation($"File {FileName} uploaded");
+                _logger.LogWarning($"File {FileName} uploaded");
             }
             return FileName;
         }
@@ -217,7 +234,7 @@ namespace TaskManagementSystem.Controllers
                 IdentityResult result = await _roleManager.CreateAsync(identityRole);
                 if (result.Succeeded)
                 {
-                    _logger.LogInformation($"Role {model.RoleName} created successfully");
+                    _logger.LogWarning($"Role {model.RoleName} created successfully");
                     return RedirectToAction("ListRoles", "Administration");
                 }
                 foreach (IdentityError error in result.Errors)

@@ -1,0 +1,38 @@
+﻿@model TaskDetailsDTO
+
+@{
+    ViewBag.Title = "Task Details";
+}
+
+<h1>Task Details</h1>
+
+<div class="row">
+    <div class="col-mid-12">
+        <div class="card">
+            <div class="card-header">
+                <h2>@Model.Title</h2>
+            </div>
+            <div class="card-body text-center">
+                <h5>Description: @Model.Description</h5>
+                <h4>Start Date: @Model.StartDate</h4>
+                <h4>Due Date: @Model.DueDate</h4>
+                <h4>Priority: @Model.Priority</h4>
+                <h4>Status: @Model.Status</h4>
+@*                 <h4>Assigned By: @Model.AssignedByUserId.Name</h4>
+                <h4>Assigned To: @Model.AssignedToUserId</h4> *@
+                <h4>Comments: </h4>
+                @foreach (var item in Model.Comments)
+                {
+                    <h4>@item.Text, @item.Date, @item.User</h4>
+                }
+            </div>
+            <div class="card-footer text-center">
+                <a asp-controller="Tasks" asp-action="Index" class="btn btn-primary">Back</a>
+                <a asp-controller="Tasks" asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Edit</a>
+            </div>
+        </div>
+        <div class="card-footer">
+            
+        </div>
+    </div>
+</div>

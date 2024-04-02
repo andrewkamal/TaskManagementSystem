@@ -36,6 +36,11 @@ namespace TaskManagementSystem.Models
             return DB.Comment.Find(id);
         }
 
+        public IEnumerable<Comment> GetCommentsForTask(int id)
+        {
+            return DB.Comment.Where(c => c.TaskId == id);
+        }
+
         public Comment UpdateComment(Comment commentChanges)
         {
             var comment = DB.Comment.Attach(commentChanges);

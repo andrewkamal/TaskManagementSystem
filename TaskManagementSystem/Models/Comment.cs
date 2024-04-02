@@ -9,7 +9,7 @@ namespace TaskManagementSystem.Models
         public DateTime Date { get; set; }
         public int TaskId { get; set; }
         [ForeignKey("TaskId")]
-        public virtual Task Task { get; set; }
+        public virtual Tasks Task { get; set; }
         public string UserId { get; set; }
         [ForeignKey("UserId")]
         public virtual ApplicationUser User { get; set; }

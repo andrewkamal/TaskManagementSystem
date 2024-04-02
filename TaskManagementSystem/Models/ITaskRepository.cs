@@ -2,10 +2,12 @@
 {
     public interface ITaskRepository
     {
-        Task GetTask(int id);
-        IEnumerable<Task> GetAllTasks();
-        Task AddTask(Task task);
-        Task UpdateTask(Task taskChanges);
-        Task DeleteTask(int id);
+        Tasks GetTask(int id);
+        IEnumerable<Tasks> GetTasksAssignedToUser(string userId);
+        IEnumerable<Tasks> GetTasksFiltered(Priority? priority, Status? status, string userId);
+        IEnumerable<Tasks> GetAllTasks();
+        Tasks AddTask(Tasks task);
+        Tasks UpdateTask(Tasks taskChanges);
+        Tasks DeleteTask(int id);
     }
 }

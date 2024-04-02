@@ -59,7 +59,7 @@ namespace TaskManagementSystem.Controllers
                     {
                         return RedirectToAction("ListUsers", "Administration");
                     }
-                    _logger.LogInformation("User created a new account successfully.");
+                    _logger.LogWarning("User created a new account successfully.");
                     await _signInManager.SignInAsync(user, isPersistent: false);
                     return RedirectToAction("Index", "Home");
                 }
@@ -83,7 +83,7 @@ namespace TaskManagementSystem.Controllers
                 {
                     model.Photo.CopyTo(fileStream);
                 }
-                _logger.LogInformation($"File {FileName} uploaded");
+                _logger.LogWarning($"File {FileName} uploaded");
             }
             return FileName;
         }
@@ -94,12 +94,15 @@ namespace TaskManagementSystem.Controllers
         {
             if (!string.IsNullOrEmpty(ReturnUrl) && Url.IsLocalUrl(ReturnUrl))
                 ViewData["ReturnUrl"] = ReturnUrl;
+            else if(string.IsNullOrEmpty(ReturnUrl))
+                ViewData["ReturnUrl"] = "Home/Index";
             else
                 ViewData["ReturnUrl"] = "Home/Index";
             return View();
         }
         [HttpPost]
         [AllowAnonymous]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginDTO model, string ReturnUrl)
         {
             if (ModelState.IsValid)
@@ -109,12 +112,12 @@ namespace TaskManagementSystem.Controllers
                 {
                     if (!string.IsNullOrEmpty(ReturnUrl) && Url.IsLocalUrl(ReturnUrl))
                     {
-                        _logger.LogInformation("User logged in.");
+                        _logger.LogWarning("User logged in.");
                         return Redirect(ReturnUrl);
                     }
                     else
                     {
-                        _logger.LogInformation("User logged in.");
+                        _logger.LogWarning("User logged in.");
                         return RedirectToAction("Index", "Home");
                     }
                 }

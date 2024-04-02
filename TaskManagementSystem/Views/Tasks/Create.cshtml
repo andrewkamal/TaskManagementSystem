@@ -1,0 +1,96 @@
+﻿@model Tasks
+
+@{
+        ViewBag.Title = "Create Task";
+}
+
+<h1>Create Task</h1>
+
+<div class="row">
+    <div class="col-mid-12">
+        <form method="post" asp-controller="Tasks" asp-action="Create">
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <div class="form-group my-3">
+                <label asp-for="Title"></label>
+                <input asp-for="Title" class="form-control" />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+            <div class="form-group my-3">
+                <label asp-for="Description"></label>
+                <textarea asp-for="Description" class="form-control"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <div>
+                <div class="form-group my-3">
+                    <label asp-for="StartDate"></label>
+                    <input asp-for="StartDate" type="datetime-local" class="form-control" />
+                    <span asp-validation-for="StartDate" class="text-danger"></span>
+                </div>
+                <div class="form-group my-3">
+                    <label asp-for="DueDate"></label>
+                    <input asp-for="DueDate" type="datetime-local" class="form-control" />
+                    <span asp-validation-for="DueDate" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group row my-3">
+                <label asp-for="Priority" class="col-sm-2 col-form-label"></label>
+                <div class="col-sm-10">
+                    <select asp-for="Priority" class="form-select col-sm-12" asp-items="Html.GetEnumSelectList<Priority>()">
+                        <option value="">Priority Level</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group row my-3">
+                <label asp-for="Status" class="col-sm-2 col-form-label"></label>
+                <div class="col-sm-10">
+                    <select asp-for="Status" class="form-select col-sm-12" asp-items="Html.GetEnumSelectList<Status>()">
+                        <option value="">Status</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group my-3">
+                <label asp-for="AssignedByUserId"></label>
+                <select asp-for="AssignedByUserId" class="form-select" asp-items="@(new SelectList(ViewBag.Users, "Id", "UserName"))">
+                    <option value="">Select User</option>
+                </select>
+                <span asp-validation-for="AssignedByUserId" class="text-danger"></span>
+            </div>
+
+            <div class="form-group my-3">
+                <label asp-for="AssignedToUserId"></label>
+                <select asp-for="AssignedToUserId" class="form-select" asp-items="@(new SelectList(ViewBag.Users, "Id", "UserName"))">
+                    <option value="">Select User</option>
+                </select>
+                <span asp-validation-for="AssignedToUserId" class="text-danger"></span>
+            </div>
+
+            <div class="form-group my-3">
+                <label asp-for="Comments"></label>
+                <div id="comments-list">
+                    <div class="comment-item d-flex my-3">
+                        <textarea name="Comments" class="form-control"></textarea>
+                        <button type="button" class="removeComment btn btn-danger ml-2">Remove</button>
+                    </div>
+                </div>
+                <button id="addComment" type="button" class="btn btn-primary my-1">Add Comment</button>
+                <span asp-validation-for="Comments" class="text-danger"></span>
+            </div>
+
+            <button type="submit" class="btn btn-primary my-2" style="width:auto">Create Task</button>
+        </form>
+    </div>
+</div>
+
+@section scripts {
+    <script>
+        $(document).ready(function() {
+            $('#addComment').click(function () {
+                $('#comments-list').append('<div class="comment-item d-flex my-3"><textarea name="Comments" class="form-control"></textarea><button type="button" class="removeComment btn btn-danger ml-2">Remove</button></div>');
+            });
+
+            $(document).on('click', '.removeComment', function () {
+                $(this).parent().remove();
+            });
+        });
+    </script>
+}

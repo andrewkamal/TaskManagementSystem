@@ -14,4 +14,13 @@
         InProgress,
         Completed
     }
+
+    public enum Priority
+    {
+        Low,
+        Medium,
+        High,
+        Urgent,
+        Immediate
+    }
 }

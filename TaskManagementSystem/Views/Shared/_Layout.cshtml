@@ -30,10 +30,11 @@
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Tasks</a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                            <a class="dropdown-item" asp-controller="Task" asp-action="Create">Create</a>
-                            <a class="dropdown-item" asp-controller="Task" asp-action="ListRoles">Manage</a>
-                            <a class="dropdown-item" asp-controller="Task" asp-action="View">View</a>
-                            <a class="dropdown-item" asp-controller="Task" asp-action="All">All</a>
+                            <a class="dropdown-item" asp-controller="Tasks" asp-action="Index">MyTasks</a>
+                            <a class="dropdown-item" asp-controller="Tasks" asp-action="Create">Create</a>
+                            <a class="dropdown-item" asp-controller="Tasks" asp-action="ListRoles">Manage</a>
+                            <a class="dropdown-item" asp-controller="Tasks" asp-action="View">View</a>
+                            <a class="dropdown-item" asp-controller="Tasks" asp-action="All">All</a>
                         </div>
                     </li>
                     @if(signInManager.IsSignedIn(User) && User.IsInRole("Admin"))
@@ -64,7 +65,7 @@
                         <a class="nav-link" asp-controller="Account" asp-action="Register">Register</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" asp-controller="Account" asp-action="Login">Login</a>
+                            <a class="nav-link" asp-controller="Account" asp-action="Login" asp-route-ReturnUrl="Home/Index">Login</a>
                         </li>
                     }
 
