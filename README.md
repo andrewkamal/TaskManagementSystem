@@ -1,5 +1,10 @@
 # Task Management System
 ![alt text](https://github.com/andrewkamal/TaskManagementSystem/blob/master/TaskManagementSystem/wwwroot/images/TMS.jpg)
+
+## Demo
+
+Please refer to the Demo: [Link](https://drive.google.com/file/d/1xQE1i0sDifMSTsj1B-N7yncsbHqaurcQ/view?usp=drive_link)
+
 ## Description
 
 This is an implementation of a Task Management System built with Entity Framework Core and the MVC model. It allows users to manage teams and tasks and generate reports. There are several features like user authentication, authorization, auditing, dynamic views, task assignment, error handling, and dynamic reporting. 
