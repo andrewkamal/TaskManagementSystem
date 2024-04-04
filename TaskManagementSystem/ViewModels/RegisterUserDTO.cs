@@ -18,8 +18,8 @@ namespace TaskManagementSystem.ViewModels
         [DataType(DataType.Password)]
         [Display(Name = "Confirm password")]
         [Compare("Password", ErrorMessage = "Password and confirmation password do not match.")]
-        public string Name { get; set; }
         public string ConfirmPassword { get; set; }
+        public string Name { get; set; }
         public Dept Department { get; set; }
         public IFormFile Photo { get; set; }
     }

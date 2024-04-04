@@ -49,6 +49,7 @@ namespace TaskManagementSystem.Controllers
                 var user = new ApplicationUser { 
                     UserName = model.Email, 
                     Email = model.Email, 
+                    Name = model.Name,
                     Department= model.Department, 
                     PhotoPath= FileName
                 };
