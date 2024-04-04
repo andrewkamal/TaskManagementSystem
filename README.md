@@ -76,7 +76,7 @@ The system uses the following main models:
 2. Navigate to the project directory: `cd TaskManagementSystem`
 3. Restore the packages: `dotnet restore`
 4. Build the project: `dotnet build`
-5. Import the SQL file [`TMS.bak`](https://github.com/andrewkamal/TaskManagementSystem/blob/master/TMS.bak) into SQL Server to populate the database with tables and its data.
+5. Import the SQL file [`TMS.bak`](https://github.com/andrewkamal/TaskManagementSystem/blob/master/TMS.bak) into SQL Server to populate the database with tables and its data. In case the .bak file fails, the is the SQL Script file [`TMS.sql`](https://github.com/andrewkamal/TaskManagementSystem/blob/master/TMS.sql)
 
 ## Packages
 
