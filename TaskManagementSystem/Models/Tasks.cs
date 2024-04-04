@@ -13,11 +13,11 @@ namespace TaskManagementSystem.Models
         public DateTime DueDate { get; set; }
         public Priority Priority { get; set; }
         public Status Status { get; set; }
-        public string AssignedByUserId { get; set; }
-        public string AssignedToUserId { get; set; }
         [ForeignKey("AssignedByUserId")]
-        public ApplicationUser AssignedByUser { get; set; }
+        public string AssignedByUserId { get; set; }
         [ForeignKey("AssignedToUserId")]
+        public string AssignedToUserId { get; set; }
+        public ApplicationUser AssignedByUser { get; set; }
         public ApplicationUser AssignedToUser { get; set; }
         public List<Comment> Comments { get; set; }
         

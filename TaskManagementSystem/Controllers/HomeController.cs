@@ -12,13 +12,17 @@ namespace TaskManagementSystem.Controllers
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly ILogger<HomeController> _logger;
+        private readonly ITeamRepository _teamRepository;
+        private readonly IUserTeamRepository _userTeamRepository;
 
-        public HomeController(UserManager<ApplicationUser> userManager, IWebHostEnvironment webHostEnvironment, ILogger<HomeController> logger, RoleManager<IdentityRole> roleManager)
+        public HomeController(UserManager<ApplicationUser> userManager, IWebHostEnvironment webHostEnvironment, ILogger<HomeController> logger, RoleManager<IdentityRole> roleManager, ITeamRepository teamRepository, IUserTeamRepository userTeamRepository)
         {
             _userManager = userManager;
             _webHostEnvironment = webHostEnvironment;
             _logger = logger;
             _roleManager = roleManager;
+            _teamRepository = teamRepository;
+            _userTeamRepository = userTeamRepository;
         }
         [HttpGet]
         public async Task<IActionResult> Index()
@@ -30,9 +34,18 @@ namespace TaskManagementSystem.Controllers
                 model = await _userManager.Users.ToListAsync();
             else if (roles.Contains("Lead"))
             {
-                var adminUsers = await _userManager.GetUsersInRoleAsync("Admin");
-                var allUsers = await _userManager.Users.ToListAsync();
-                model = allUsers.Except(adminUsers).ToList();
+                var userTeams = _userTeamRepository.GetUserTeams(user.Id);
+                var users = new List<ApplicationUser>();
+                foreach (var userT in userTeams)
+                {
+                    var teamUsers = _userTeamRepository.GetTeamUsers(userT.TeamId);
+                    foreach (var teamUser in teamUsers)
+                    {
+                        if (!users.Contains(teamUser.User))
+                            users.Add(teamUser.User);
+                    }
+                }
+                model = users;
             }
             else
                 model = new List<ApplicationUser> { user };

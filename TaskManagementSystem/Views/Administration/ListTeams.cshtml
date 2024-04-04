@@ -1,0 +1,48 @@
+﻿@model IEnumerable<Team>
+
+@{
+    ViewBag.Title = "List Teams";
+}
+
+<h1>All Teams</h1>
+
+<div class="container my-3">
+    <div class="row">
+        <form method="get" class="input-group">
+            <input type="text" class="form-control" name="search" placeholder="Search Teams">
+            <div class="input-group-append">
+                <button type="submit" class="btn btn-primary">Search</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@if (Model.Any())
+{
+    <a asp-controller="Administration" asp-action="CreateTeam" class="btn btn-primary mb-3" style="width:auto">Add Team</a>
+    foreach (var team in Model)
+    {
+        <div class="card my-3">
+            <div class="card-header"> Team Id: @team.Id</div>
+            <div class="card-body">
+                <h5 class="card-title">@team.Name</h5>
+            </div>
+            <div class="card-footer">
+                <form asp-controller="Administration" asp-action="DeleteTeam" asp-route-id="@team.Id" method="post">
+                    <a asp-controller="Administration" asp-action="EditTeam" asp-route-id="@team.Id" class="btn btn-primary" style="width:auto">Edit</a>
+                    <button type="submit" class="btn btn-danger" style="width:auto" onclick="return confirm('Are you sure you want to delete team: @team.Name')">Delete</button>
+                </form>
+            </div>
+        </div>
+    }
+}
+else
+{
+    <div class="card">
+        <div class="card-header">No teams created</div>
+        <div class="card-body">
+            <h5 class="card-title">To create new teams select the button below</h5>
+            <a asp-controller="Administration" asp-action="CreateTeam" class="btn btn-primary" style="width:auto">Create Team</a>
+        </div>
+    </div>
+}

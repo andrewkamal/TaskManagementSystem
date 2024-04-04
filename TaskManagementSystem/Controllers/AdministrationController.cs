@@ -14,13 +14,16 @@ namespace TaskManagementSystem.Controllers
         private readonly ILogger<AdministrationController> _logger;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IWebHostEnvironment _webHostEnvironment;
-        public AdministrationController(RoleManager<IdentityRole> roleManager, ILogger<AdministrationController> logger, UserManager<ApplicationUser> userManager, IWebHostEnvironment webHostEnvironment)
+        private readonly ITeamRepository _teamRepository;
+        private readonly IUserTeamRepository _userTeamRepository;
+        public AdministrationController(RoleManager<IdentityRole> roleManager, ILogger<AdministrationController> logger, UserManager<ApplicationUser> userManager, IWebHostEnvironment webHostEnvironment, ITeamRepository teamRepository, IUserTeamRepository userTeamRepository)
         {
             _roleManager = roleManager;
             _logger = logger;
             _userManager = userManager;
             _webHostEnvironment = webHostEnvironment;
-
+            _teamRepository = teamRepository;
+            _userTeamRepository = userTeamRepository;
         }
 
         [HttpGet]
@@ -51,6 +54,7 @@ namespace TaskManagementSystem.Controllers
                 }
                 model.Add(userRolesDTO);
             }
+            _logger.LogWarning($"Roles of user with Id = {userId} listed");
             return View(model);
         }
         [HttpPost]
@@ -75,6 +79,7 @@ namespace TaskManagementSystem.Controllers
                 ModelState.AddModelError("", "Cannot add selected roles to user");
                 return View(model);
             }
+            _logger.LogWarning($"Roles of user with Id = {userId} updated");
             return RedirectToAction("EditUser", new { Id = userId });
         }
 
@@ -102,6 +107,7 @@ namespace TaskManagementSystem.Controllers
             {
                 ModelState.AddModelError("", error.Description);
             }
+            _logger.LogWarning($"User with Id = {id} deleted");
             return View("ListUsers");
         }
         [HttpPost]
@@ -122,6 +128,7 @@ namespace TaskManagementSystem.Controllers
             {
                 ModelState.AddModelError("", error.Description);
             }
+            _logger.LogWarning($"Role with Id = {id} deleted");
             return View("ListRoles");
         }
 
@@ -133,6 +140,7 @@ namespace TaskManagementSystem.Controllers
             {
                 users = users.Where(u => u.UserName.Contains(search));
             }
+            _logger.LogWarning("All Users listed");
             return View(users);
         }
 
@@ -196,6 +204,7 @@ namespace TaskManagementSystem.Controllers
                 {
                     ModelState.AddModelError("", error.Description);
                 }
+                _logger.LogWarning($"User with Id = {model.Id} updated");
                 return View(model);
             }
         }
@@ -253,6 +262,7 @@ namespace TaskManagementSystem.Controllers
             {
                 roles = roles.Where(r => r.Name.Contains(search));
             }
+            _logger.LogWarning("All Roles listed");
             return View(roles);
         }
         [HttpGet]
@@ -297,6 +307,7 @@ namespace TaskManagementSystem.Controllers
                 {
                     ModelState.AddModelError("", error.Description);
                 }
+                _logger.LogWarning($"Role {model.RoleName} updated");
                 return View(model);
             }
         }
@@ -329,6 +340,7 @@ namespace TaskManagementSystem.Controllers
                 }
                 model.Add(userRoleDTO);
             }
+            _logger.LogWarning($"Users in role {role.Name} listed");
             return View(model);
         }
         [HttpPost]
@@ -345,13 +357,142 @@ namespace TaskManagementSystem.Controllers
                 var user = await _userManager.FindByIdAsync(model[i].UserId);
                 IdentityResult result = null;
                 if (model[i].IsSelected && !(await _userManager.IsInRoleAsync(user, role.Name)))
+                {
+                    _logger.LogWarning($"User {user.UserName} added to role {role.Name}");
                     result = await _userManager.AddToRoleAsync(user, role.Name);
+                }
                 else if (!model[i].IsSelected && await _userManager.IsInRoleAsync(user, role.Name))
+                {
+                    _logger.LogWarning($"User {user.UserName} removed from role {role.Name}");
                     result = await _userManager.RemoveFromRoleAsync(user, role.Name);
+                }
                 else
                     continue;
             }
+            _logger.LogWarning($"Role {role.Name} updated");
             return RedirectToAction("EditRole", new { Id = roleId });
+        }
+        [HttpGet]
+        public IActionResult CreateTeam()
+        {
+            return View();
+        }
+        [HttpPost]
+        public IActionResult CreateTeam(TeamDTO model)
+        {
+            if (ModelState.IsValid)
+            {
+                var team = new Team
+                {
+                    Name = model.Name
+                };
+                _teamRepository.AddTeam(team);
+                _logger.LogWarning($"Team {model.Name} created");
+                return RedirectToAction("ListTeams");
+            }
+            return View(model);
+        }
+        [HttpGet]
+        public IActionResult ListTeams(string search)
+        {
+            var teams = _teamRepository.GetAllTeams();
+            if (!String.IsNullOrEmpty(search))
+            {
+                teams = teams.Where(t => t.Name.Contains(search));
+                _logger.LogWarning($"Teams with name containing {search} listed");
+            }
+            else
+                _logger.LogWarning("All Teams listed");
+            return View(teams);
+        }
+        [HttpGet]
+        public IActionResult EditTeam(int id)
+        {
+            var team = _teamRepository.GetTeam(id);
+            var model = new EditTeamDTO
+            {
+                Id = team.Id,
+                TeamName = team.Name,
+                Users = new List<string>()
+            };
+            var teamUsers = _userTeamRepository.GetTeamUsers(id);
+            foreach (var user in teamUsers)
+            {
+                model.Users.Add(user.User.UserName);
+            }
+            return View(model);
+        }
+        [HttpPost]
+        public IActionResult EditTeam(EditTeamDTO model)
+        {
+            if (ModelState.IsValid)
+            {
+                var team = new Team
+                {
+                    Id = model.Id,
+                    Name = model.TeamName
+                };
+                _teamRepository.UpdateTeam(team);
+                _logger.LogWarning($"Team with Id = {model.Id} updated");
+                return RedirectToAction("ListTeams");
+            }
+            return View(model);
+        }
+        [HttpPost]
+        public IActionResult DeleteTeam(int id)
+        {
+            _teamRepository.DeleteTeam(id);
+            _logger.LogWarning($"Team with Id = {id} deleted");
+            return RedirectToAction("ListTeams");
+        }
+        [HttpGet]
+        public IActionResult EditUsersInTeam(int teamId)
+        {
+            ViewBag.teamId = teamId;
+            var team = _teamRepository.GetTeam(teamId);
+            var model = new List<UserTeamDTO>();
+            foreach (var user in _userManager.Users)
+            {
+                var userTeamDTO = new UserTeamDTO
+                {
+                    UserId = user.Id,
+                    UserName = user.UserName
+                };
+                if (_userTeamRepository.IsUserInTeam(user.Id, teamId))
+                    userTeamDTO.IsSelected = true;
+                else
+                    userTeamDTO.IsSelected = false;
+                model.Add(userTeamDTO);
+            }
+            _logger.LogWarning($"Users in team {team.Name} listed");
+            return View(model);
+        }
+        [HttpPost]
+        public IActionResult EditUsersInTeam(List<UserTeamDTO> model, int teamId)
+        {
+            var team = _teamRepository.GetTeam(teamId);
+            for (int i = 0; i < model.Count; i++)
+            {
+                var user = _userManager.FindByIdAsync(model[i].UserId).Result;
+                if (model[i].IsSelected && !_userTeamRepository.IsUserInTeam(user.Id, teamId))
+                {
+                    var userTeam = new UserTeam
+                    {
+                        UserId = user.Id,
+                        TeamId = teamId
+                    };
+                    _logger.LogWarning($"User {user.UserName} added to team {team.Name}");
+                    _userTeamRepository.AddUserTeam(userTeam);
+                }
+                else if (!model[i].IsSelected && _userTeamRepository.IsUserInTeam(user.Id, teamId))
+                {
+                    _logger.LogWarning($"User {user.UserName} removed from team {team.Name}");
+                    _userTeamRepository.DeleteUserTeam(user.Id, teamId);
+                }
+                else
+                    continue;
+            }
+            return RedirectToAction("EditTeam", new { Id = teamId });
         }
     }
 }

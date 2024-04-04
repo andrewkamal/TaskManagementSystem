@@ -1,0 +1,23 @@
+﻿@model TeamDTO
+
+@{
+    ViewBag.Title = "Create New Team";
+}
+
+<h1>Create New Team</h1>
+
+<div class="row">
+    <div class="col-mid-12">
+        <form method="post" asp-controller="Administration" asp-action="CreateTeam">
+            <div asp-validation-summary="All" class="text-danger"></div>
+
+            <div class="form-group my-3">
+                <label asp-for="Name"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+
+            <button type="submit" class="btn btn-primary my-2" style="width:auto">Create Team</button>
+        </form>
+    </div>
+</div>

@@ -30,10 +30,9 @@
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Tasks</a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                            <a class="dropdown-item" asp-controller="Tasks" asp-action="Index">MyTasks</a>
                             <a class="dropdown-item" asp-controller="Tasks" asp-action="Create">Create</a>
-                            <a class="dropdown-item" asp-controller="Tasks" asp-action="ListRoles">Manage</a>
-                            <a class="dropdown-item" asp-controller="Tasks" asp-action="View">View</a>
+                            <a class="dropdown-item" asp-controller="Tasks" asp-action="Index">Manage</a>
+                            <a class="dropdown-item" asp-controller="Tasks" asp-action="ViewDate">By Date</a>
                             <a class="dropdown-item" asp-controller="Tasks" asp-action="All">All</a>
                         </div>
                     </li>
@@ -44,6 +43,21 @@
                             <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                                 <a class="dropdown-item" asp-controller="Administration" asp-action="ListUsers">Users</a>
                                 <a class="dropdown-item" asp-controller="Administration" asp-action="ListRoles">Roles</a>
+                                <a class="dropdown-item" asp-controller="Administration" asp-action="ListTeams">Teams</a>
+                            </div>
+                        </li>
+                    }
+                    @if (signInManager.IsSignedIn(User) && (User.IsInRole("Admin") || (User.IsInRole("Lead"))))
+                    {
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Reports</a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                <a class="dropdown-item" asp-controller="Report" asp-action="ListUsers">User Productivity</a>
+                                <a class="dropdown-item" asp-controller="Report" asp-action="ListRoles">Users Productivity</a>
+                                <a class="dropdown-item" asp-controller="Report" asp-action="ListTeams">User Tasks</a>
+                                <a class="dropdown-item" asp-controller="Report" asp-action="ListTeams">Users Tasks</a>
+                                <a class="dropdown-item" asp-controller="Report" asp-action="ListTeams">Team Performance</a>
+                                <a class="dropdown-item" asp-controller="Report" asp-action="ListTeams">Teams Performance</a>
                             </div>
                         </li>
                     }

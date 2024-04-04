@@ -32,6 +32,8 @@ builder.Services.AddControllersWithViews(options =>
 
 builder.Services.AddScoped<ITaskRepository, TaskRepository>();
 builder.Services.AddScoped<ICommentRepository, CommentRepository>();
+builder.Services.AddScoped<ITeamRepository, TeamRepository>();
+builder.Services.AddScoped<IUserTeamRepository, UserTeamRepository>();
 
 builder.Services.AddDbContextPool<TMSDbContext>(options =>
 options.UseSqlServer(config.GetConnectionString("DefaultConnection")));

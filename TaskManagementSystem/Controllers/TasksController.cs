@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -14,29 +15,45 @@ namespace TaskManagementSystem.Controllers
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly ILogger<TasksController> _logger;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly ITeamRepository _teamRepository;
+        private readonly IUserTeamRepository _userTeamRepository;
 
-        public TasksController(RoleManager<IdentityRole> roleManager, ILogger<TasksController> logger, UserManager<ApplicationUser> userManager, ICommentRepository commentRepository, ITaskRepository taskRepository)
+        public TasksController(RoleManager<IdentityRole> roleManager, ILogger<TasksController> logger, UserManager<ApplicationUser> userManager, ICommentRepository commentRepository, ITaskRepository taskRepository, ITeamRepository teamRepository, IUserTeamRepository userTeamRepository)
         {
             _roleManager = roleManager;
             _logger = logger;
             _userManager = userManager;
             _taskRepository = taskRepository;
             _commentRepository = commentRepository;
+            _teamRepository = teamRepository;
+            _userTeamRepository = userTeamRepository;
         }
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string id)
         {
-            var user = await _userManager.GetUserAsync(User);
-            var tasks = _taskRepository.GetTasksAssignedToUser(user.Id);
-            return View(tasks);
+            if (id != null)
+            {
+
+                var user = await _userManager.FindByIdAsync(id);
+                var tasks = _taskRepository.GetTasksAssignedToUser(user.Id);
+                _logger.LogWarning($"User {user.Id} viewed tasks assigned to them");
+                return View(tasks);
+            }
+            else
+            {
+                var user = await _userManager.GetUserAsync(User);
+                var tasks = _taskRepository.GetTasksAssignedToUser(user.Id);
+                _logger.LogWarning($"User {user.Id} viewed tasks assigned to them");
+                return View(tasks);
+            }
         }
         [HttpGet]
         public async Task<IActionResult> Create()
-        {
+        { 
             ViewBag.Users = await _userManager.Users.ToListAsync();
+            _logger.LogWarning("Create task page viewed");
             return View();
         }
-
         [HttpPost]
         public async Task<IActionResult> Create(CreateTaskDTO model)
         {
@@ -57,6 +74,10 @@ namespace TaskManagementSystem.Controllers
                 };
                 var addedTask = _taskRepository.AddTask(task);
                 _logger.LogWarning($"Task {addedTask.Id} created by {user.Id}");
+                if(model.Comments == null)
+                {
+                    return RedirectToAction("Index", "Tasks");
+                }
                 foreach(var comment in model.Comments)
                 {
                     var newComment = new Comment
@@ -94,8 +115,9 @@ namespace TaskManagementSystem.Controllers
                 Status = task.Status,
                 AssignedByUserId = task.AssignedByUserId,
                 AssignedToUserId = task.AssignedToUserId,
-                Comments = _commentRepository.GetCommentsForTask(task.Id).ToList()
+                Comments = _commentRepository.GetAllComments().Where(c => c.TaskId == task.Id).Select(t => t.Text).ToList()
             };
+            _logger.LogWarning($"Edit task page viewed");
             return View(model);
         }
         [HttpPost]
@@ -122,12 +144,16 @@ namespace TaskManagementSystem.Controllers
                     _commentRepository.DeleteComment(comment.Id);
                     _logger.LogWarning($"Comment {comment.Id} deleted by {user.Id}");
                 }
+                if(model.Comments == null)
+                {
+                    return RedirectToAction("Index", "Tasks");
+                }
                 foreach (var comment in model.Comments)
                 {
                     var newComment = new Comment
                     {
                         TaskId = updatedTask.Id,
-                        Text = comment.Text,
+                        Text = comment,
                         Date = DateTime.Now,
                         UserId = user.Id
                     };
@@ -160,9 +186,13 @@ namespace TaskManagementSystem.Controllers
                 AssignedToUserId = task.AssignedToUserId,
                 Comments = _commentRepository.GetCommentsForTask(task.Id).ToList()
             };
+            ViewBag.AssignedByUser = _userManager.FindByIdAsync(task.AssignedByUserId).Result;
+            ViewBag.AssignedToUser = _userManager.FindByIdAsync(task.AssignedToUserId).Result;
+            _logger.LogWarning($"Task {task.Id} details viewed");
             return View(model);
         }
-        [HttpPost]
+        [HttpGet]
+        [Authorize(Roles="Admin,Lead")]
         public IActionResult Delete(int id)
         {
             var task = _taskRepository.GetTask(id);
@@ -176,5 +206,47 @@ namespace TaskManagementSystem.Controllers
             _logger.LogWarning($"Task {task.Id} deleted");
             return RedirectToAction("Index", "Tasks");
         }
+        [HttpGet]
+        public async Task<IActionResult> ViewDate(DateTime startDate, DateTime endDate)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            var tasks = _taskRepository.GetTasksAssignedToUser(user.Id);
+            if (startDate.ToString() == null || endDate.ToString() == null)
+                _logger.LogWarning($"User {user.Id} viewed all tasks");
+            else
+            {
+                tasks = tasks.Where(t => t.StartDate >= startDate && t.DueDate <= endDate).ToList();
+                _logger.LogWarning($"User {user.Id} viewed tasks between {startDate} and {endDate}");
+            }
+            return View(tasks);
+        }
+        [HttpGet]
+        public IActionResult All()
+        {
+            if(User.IsInRole("Admin"))
+            {
+                var tasks = _taskRepository.GetAllTasks();
+                return View(tasks);
+            }
+            else if(User.IsInRole("Lead"))
+            {
+                var user = _userManager.GetUserAsync(User).Result;
+                var teams = _userTeamRepository.GetUserTeams(user.Id);
+                var tasks = new List<Tasks>();
+                foreach(var team in teams)
+                {
+                    var TeamUsers = _userTeamRepository.GetTeamUsers(team.TeamId);
+                    foreach(var teamUser in TeamUsers)
+                    {
+                        var userTasks= _taskRepository.GetTasksAssignedToUser(teamUser.UserId);
+                        tasks.AddRange(userTasks);
+                    }
+                }
+                tasks = tasks.Distinct().ToList();
+                return View(tasks);
+            }
+            return View();
+        }
+
     }
 }

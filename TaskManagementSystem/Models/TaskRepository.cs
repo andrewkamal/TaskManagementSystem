@@ -19,7 +19,7 @@ namespace TaskManagementSystem.Models
         }
         public Tasks DeleteTask(int id)
         {
-            Tasks task = DB.Task.Find(id);
+            var task = DB.Task.Find(id);
             if (task != null)
             {
                 DB.Task.Remove(task);
@@ -30,7 +30,8 @@ namespace TaskManagementSystem.Models
 
         public IEnumerable<Tasks> GetAllTasks()
         {
-            return DB.Task;
+            return DB.Task.Include(t => t.AssignedByUser)
+                    .Include(t => t.AssignedToUser);
         }
 
         public Tasks GetTask(int id)
@@ -40,8 +41,7 @@ namespace TaskManagementSystem.Models
 
         public IEnumerable<Tasks> GetTasksAssignedToUser(string userId)
         {
-            var tasks = DB.Task
-                .Include(t => t.AssignedByUser)
+            var tasks = DB.Task.Include(t => t.AssignedByUser)
                 .Where(t => t.AssignedToUserId == userId)
                 .ToList();
             return tasks;

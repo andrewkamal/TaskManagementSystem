@@ -1,9 +1,25 @@
 ﻿@model IEnumerable<Tasks>
 @{
-    ViewBag.Title = "My Tasks";
+    ViewBag.Title = "My Tasks by Date";
 }
 
-<h1 class="my-3">Tasks</h1>
+<h1 class="my-3">My Tasks by Date</h1>
+
+<form method="get">
+    <div class="row my-3">
+        <div class="col-md-5">
+            <label for="startDate">Start Date:</label>
+            <input type="date" id="startDate" name="startDate" class="form-control">
+        </div>
+        <div class="col-md-5">
+            <label for="endDate">End Date:</label>
+            <input type="date" id="endDate" name="endDate" class="form-control">
+        </div>
+        <div class="col-md-2 d-flex align-items-end">
+            <button type="submit" class="btn btn-outline-dark mt-4" style="width:300px">Search</button>
+        </div>
+    </div>
+</form>
 
 <div class="row my-3">
     <div class="col-mid-12">

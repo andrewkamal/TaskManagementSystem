@@ -13,6 +13,6 @@ namespace TaskManagementSystem.ViewModels
         public Status Status { get; set; }
         public string AssignedByUserId { get; set; }
         public string AssignedToUserId { get; set; }
-        public List<Comment> Comments { get; set; }
+        public List<string> ? Comments { get; set; }
     }
 }

@@ -2,28 +2,30 @@
 
 @{
     ViewBag.Title = "Task Details";
+    var assignedBy = ViewBag.AssignedByUser;
+    var assignedTo = ViewBag.AssignedToUser;
 }
 
-<h1>Task Details</h1>
+<h1 class="my-3">Task Details</h1>
 
-<div class="row">
+<div class="row justify-content-center">
     <div class="col-mid-12">
-        <div class="card">
-            <div class="card-header">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
                 <h2>@Model.Title</h2>
             </div>
-            <div class="card-body text-center">
-                <h5>Description: @Model.Description</h5>
-                <h4>Start Date: @Model.StartDate</h4>
-                <h4>Due Date: @Model.DueDate</h4>
-                <h4>Priority: @Model.Priority</h4>
-                <h4>Status: @Model.Status</h4>
-@*                 <h4>Assigned By: @Model.AssignedByUserId.Name</h4>
-                <h4>Assigned To: @Model.AssignedToUserId</h4> *@
-                <h4>Comments: </h4>
+            <div class="card-body">
+                <p class="mb-1"><strong>Description:</strong> @Model.Description</p>
+                <p class="mb-1"><strong>Start Date:</strong> @Model.StartDate</p>
+                <p class="mb-1"><strong>Due Date:</strong> @Model.DueDate</p>
+                <p class="mb-1"><strong>Priority:</strong> @Model.Priority</p>
+                <p class="mb-1"><strong>Status:</strong> @Model.Status</p>
+                <p class="mb-1"><strong>Assigned To:</strong> @assignedTo</p>
+                <p class="mb-1"><strong>Assigned By:</strong> @assignedBy</p>
+                <h5 class="mt-3 mb-2">Comments:</h5>
                 @foreach (var item in Model.Comments)
                 {
-                    <h4>@item.Text, @item.Date, @item.User</h4>
+                    <p class="mb-1"><strong>@item.User.Name (@item.User.UserName):</strong> @item.Text (@item.Date)</p>
                 }
             </div>
             <div class="card-footer text-center">

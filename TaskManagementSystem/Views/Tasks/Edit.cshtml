@@ -8,7 +8,7 @@
 
 <div class="row">
     <div class="col-mid-12">
-        <form method="post" asp-controller="Tasks" asp-action="Create">
+        <form method="post" asp-controller="Tasks" asp-action="Edit">
             <div asp-validation-summary="All" class="text-danger"></div>
             <div class="form-group my-3">
                 <label asp-for="Title"></label>
@@ -63,16 +63,18 @@
                 </select>
                 <span asp-validation-for="AssignedToUserId" class="text-danger"></span>
             </div>
+
             <div id="comments">
                 <label asp-for="Comments"></label>
-                @foreach (var comment in Model.Comments)
+                @for (int i = 0; i < Model.Comments.Count; i++)
                 {
                     <div class="comment d-flex my-3">
-                        <textarea name="Comments" class="form-control">@comment.Text</textarea>
+                        <textarea name="Comments[@i]" class="form-control">@Model.Comments[i]</textarea>
                         <button type="button" class="removeComment btn btn-danger ml-2">Remove</button>
                     </div>
                 }
             </div>
+
             <button id="addComment" type="button" class="btn btn-primary"style="width:auto">Add Comment</button>
             </br>
             <button type="submit" class="btn btn-primary my-2" style="width:auto">Update Task</button>
@@ -81,15 +83,26 @@
 </div>
 
 @section scripts {
-    <script>
-        $(document).ready(function() {
-            $('#addComment').click(function() {
-                $('#comments').append('<div class="comment d-flex my-3"><textarea name="Comments" class="form-control"></textarea><button type="button" class="removeComment btn btn-danger ml-2">Remove</button></div>');
-            });
+<script>
+    $(document).ready(function() {
+        var commentIndex = @Model.Comments.Count;
 
-            $(document).on('click', '.removeComment', function() {
-                $(this).parent().remove();
-            });
+        $('#addComment').click(function() {
+            $('#comments').append('<div class="comment d-flex my-3"><textarea name="Comments[' + commentIndex + ']" class="form-control"></textarea><button type="button" class="removeComment btn btn-danger ml-2">Remove</button></div>');
+            commentIndex++;
         });
-    </script>
+
+        $(document).on('click', '.removeComment', function() {
+            $(this).parent().remove();
+            updateIndices();
+        });
+
+        function updateIndices() {
+            $('#comments .comment').each(function(index) {
+                $(this).find('textarea').attr('name', 'Comments[' + index + ']');
+            });
+            commentIndex = $('#comments .comment').length;
+        }
+    });
+</script>
 }

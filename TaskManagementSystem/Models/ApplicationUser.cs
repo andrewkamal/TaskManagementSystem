@@ -10,5 +10,6 @@ namespace TaskManagementSystem.Models
         [Required]
         public Dept Department { get; set; }
         public string ? PhotoPath { get; set; }
+        public ICollection<UserTeam> UserTeams { get; set; }
     }
 }
