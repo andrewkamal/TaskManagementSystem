@@ -29,7 +29,25 @@ namespace TaskManagementSystem.Controllers
         [HttpGet]
         public IActionResult UsersProductivity()
         {
-            var users = _userManager.Users.ToList();
+            var loggedUser = _userManager.GetUserAsync(User).Result;
+            var users = new List<ApplicationUser>(); ;
+            if (User.IsInRole("Admin"))
+                users = _userManager.Users.ToList();
+            else if (User.IsInRole("Lead"))
+            {
+                var userTeams = _userTeamRepository.GetUserTeams(loggedUser.Id);
+                var teamUsers = new List<ApplicationUser>();
+                foreach (var userT in userTeams)
+                {
+                    var allUsersTeam = _userTeamRepository.GetTeamUsers(userT.TeamId);
+                    foreach (var user in allUsersTeam)
+                    {
+                        teamUsers.Add(_userManager.FindByIdAsync(user.UserId).Result);
+                    }
+                }
+                teamUsers = teamUsers.Distinct().ToList();
+                users = teamUsers;
+            }
             var report = new List<UserProductivityDTO>();
 
             foreach (var user in users)
@@ -50,43 +68,105 @@ namespace TaskManagementSystem.Controllers
         [HttpGet]
         public IActionResult UserProductivity(string id)
         {
-            var user = _userManager.FindByIdAsync(id).Result;
-            var userTasks = _taskRepository.GetTasksAssignedToUser(user.Id);
-            var completedTasks = userTasks.Count(task => task.Status == Status.Completed);
-            var productivity = (double)completedTasks / userTasks.Count();
-
-            var report = new UserProductivityDTO
+            var loggedUser = _userManager.GetUserAsync(User).Result;
+            if (User.IsInRole("Admin"))
+                ViewBag.Users = _userManager.Users.ToList();
+            else if (User.IsInRole("Lead"))
             {
-                User = user,
-                Productivity = productivity
-            };
-            _logger.LogInformation($"User Productivity Report for user {user.UserName} was generated");
-            return View(report);
+                var userTeams = _userTeamRepository.GetUserTeams(loggedUser.Id);
+                var teamUsers = new List<ApplicationUser>();
+                foreach (var userT in userTeams)
+                {
+                    var allUsersTeam = _userTeamRepository.GetTeamUsers(userT.TeamId);
+                    foreach (var user in allUsersTeam)
+                    {
+                        teamUsers.Add(_userManager.FindByIdAsync(user.UserId).Result);
+                    }
+                }
+                teamUsers = teamUsers.Distinct().ToList();
+                ViewBag.Users = teamUsers;
+            }
+            if (id != null)
+            {
+
+                var user = _userManager.FindByIdAsync(id).Result;
+                var userTasks = _taskRepository.GetTasksAssignedToUser(user.Id);
+                var completedTasks = userTasks.Count(task => task.Status == Status.Completed);
+                var productivity = (double)completedTasks / userTasks.Count();
+
+                var report = new UserProductivityDTO
+                {
+                    User = user,
+                    Productivity = productivity
+                };
+                _logger.LogInformation($"User Productivity Report for user {user.UserName} was generated");
+                return View(report);
+            }
+            return View();
         }
         [HttpGet]
         public IActionResult UserTaskCompletion(string id)
         {
-            var user = _userManager.FindByIdAsync(id).Result;
-            var userTasks = _taskRepository.GetTasksAssignedToUser(user.Id);
-            var completedTasks = userTasks.Count(task => task.Status == Status.Completed);
-            var incompletedTasks = userTasks.Count(task => task.Status != Status.Completed);
-
-            var report = new TaskCompletionDTO
+            var loggedUser = _userManager.GetUserAsync(User).Result;
+            if (User.IsInRole("Admin"))
+                ViewBag.Users = _userManager.Users.ToList();
+            else if (User.IsInRole("Lead"))
             {
-                User = user,
-                CompletedTasks = completedTasks,
-                IncompletedTasks = incompletedTasks,
-                TotalTasks = userTasks.Count()
-            };
-            _logger.LogInformation($"User Task Completion Report for user {user.UserName} was generated");
-            return View(report);
+                var userTeams = _userTeamRepository.GetUserTeams(loggedUser.Id);
+                var teamUsers = new List<ApplicationUser>();
+                foreach (var userT in userTeams)
+                {
+                    var allUsersTeam = _userTeamRepository.GetTeamUsers(userT.TeamId);
+                    foreach (var user in allUsersTeam)
+                    {
+                        teamUsers.Add(_userManager.FindByIdAsync(user.UserId).Result);
+                    }
+                }
+                teamUsers = teamUsers.Distinct().ToList();
+                ViewBag.Users = teamUsers;
+            }
+            if (id != null)
+            {
+                var user = _userManager.FindByIdAsync(id).Result;
+                var userTasks = _taskRepository.GetTasksAssignedToUser(user.Id);
+                var completedTasks = userTasks.Count(task => task.Status == Status.Completed);
+                var incompletedTasks = userTasks.Count(task => task.Status != Status.Completed);
+
+                var report = new TaskCompletionDTO
+                {
+                    User = user,
+                    CompletedTasks = completedTasks,
+                    IncompletedTasks = incompletedTasks,
+                    TotalTasks = userTasks.Count()
+                };
+                _logger.LogInformation($"User Task Completion Report for user {user.UserName} was generated");
+                return View(report);
+            }
+            return View();
         }
         [HttpGet]
         public IActionResult UsersTaskCompletion()
         {
-            var users = _userManager.Users.ToList();
+            var loggedUser = _userManager.GetUserAsync(User).Result;
+            var users = new List<ApplicationUser>(); ;
             var report = new List<TaskCompletionDTO>();
-
+            if (User.IsInRole("Admin"))
+                users = _userManager.Users.ToList();
+            else if (User.IsInRole("Lead"))
+            {
+                var userTeams = _userTeamRepository.GetUserTeams(loggedUser.Id);
+                var teamUsers = new List<ApplicationUser>();
+                foreach (var userT in userTeams)
+                {
+                    var allUsersTeam = _userTeamRepository.GetTeamUsers(userT.TeamId);
+                    foreach (var user in allUsersTeam)
+                    {
+                        teamUsers.Add(_userManager.FindByIdAsync(user.UserId).Result);
+                    }
+                }
+                teamUsers = teamUsers.Distinct().ToList();
+                users = teamUsers;
+            }
             foreach (var user in users)
             {
                 var userTasks = _taskRepository.GetTasksAssignedToUser(user.Id);
@@ -107,32 +187,62 @@ namespace TaskManagementSystem.Controllers
         [HttpGet]
         public IActionResult TeamPerformance(int id)
         {
-            var team = _teamRepository.GetTeam(id);
-            var users = _userTeamRepository.GetTeamUsers(id);
-            var completedTasks = 0;
-            var totalTasks = 0;
+            var loggedUser = _userManager.GetUserAsync(User).Result;
+            var teams = new List<Team>();
 
-            foreach (var user in users)
+            if (User.IsInRole("Admin"))
+                ViewBag.Teams = _teamRepository.GetAllTeams().ToList();
+            else if (User.IsInRole("Lead"))
             {
-                var userTasks = _taskRepository.GetTasksAssignedToUser(user.UserId);
-                completedTasks += userTasks.Count(task => task.Status == Status.Completed);
-                totalTasks += userTasks.Count();
+                var userTeams = _userTeamRepository.GetUserTeams(loggedUser.Id);
+                foreach (var userT in userTeams)
+                {
+                    teams.Add(_teamRepository.GetTeam(userT.TeamId));
+                }
+                ViewBag.Teams = teams.Distinct().ToList();
             }
-
-            var report = new TeamPerformanceDTO
+            if(id != 0)
             {
-                TeamName = team.Name,
-                Performance = (double)completedTasks / totalTasks
-            };
+                var users = _userTeamRepository.GetTeamUsers(id);
+                var completedTasks = 0;
+                var totalTasks = 0;
 
-            _logger.LogInformation($"Team Performance Report for team {team.Name} was generated");
-            return View(report);
+                foreach (var user in users)
+                {
+                    var userTasks = _taskRepository.GetTasksAssignedToUser(user.UserId);
+                    completedTasks += userTasks.Count(task => task.Status == Status.Completed);
+                    totalTasks += userTasks.Count();
+                }
+
+                var performance = new TeamPerformanceDTO
+                {
+                    Team = _teamRepository.GetTeam(id),
+                    TotalMembers = users.Count(),
+                    Performance = (double)completedTasks / totalTasks
+                };
+                _logger.LogInformation($"Team Performance Report for teamID {id} was generated");
+                return View(performance);
+            }
+            return View();
         }
         [HttpGet]
         public IActionResult TeamsPerformance()
         {
-            var teams = _teamRepository.GetAllTeams();
-            var report = new List<TeamPerformanceDTO>();
+            var loggedUser = _userManager.GetUserAsync(User).Result;
+            var teams = new List<Team>();
+            var performance = new List<TeamPerformanceDTO>();
+            
+            if(User.IsInRole("Admin"))
+                teams = _teamRepository.GetAllTeams().ToList();
+            else if(User.IsInRole("Lead"))
+            {
+                var userTeams = _userTeamRepository.GetUserTeams(loggedUser.Id);
+                foreach (var userT in userTeams)
+                {
+                    teams.Add(_teamRepository.GetTeam(userT.TeamId));
+                }
+                teams = teams.Distinct().ToList();
+            }
 
             foreach (var team in teams)
             {
@@ -147,14 +257,15 @@ namespace TaskManagementSystem.Controllers
                     totalTasks += userTasks.Count();
                 }
 
-                report.Add(new TeamPerformanceDTO
+                performance.Add(new TeamPerformanceDTO
                 {
-                    TeamName = team.Name,
+                    Team = team,
+                    TotalMembers = users.Count(),
                     Performance = (double)completedTasks / totalTasks
                 });
             }
             _logger.LogInformation("Teams Performance Report was generated");
-            return View(report);
+            return View(performance);
         }
     }
 }

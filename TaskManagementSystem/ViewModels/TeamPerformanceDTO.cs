@@ -1,8 +1,11 @@
-﻿namespace TaskManagementSystem.ViewModels
+﻿using TaskManagementSystem.Models;
+
+namespace TaskManagementSystem.ViewModels
 {
     public class TeamPerformanceDTO
     {
-        public string TeamName { get; set; }
+        public Team Team { get; set; }
+        public int TotalMembers { get; set; }
         public double Performance { get; set; }
     }
 }

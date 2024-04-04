@@ -129,12 +129,14 @@ namespace TaskManagementSystem.Controllers
         public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOutAsync();
+            _logger.LogWarning("User logged out.");
             return RedirectToAction("Index", "Home");
         }
         [HttpGet]
         [AllowAnonymous]
         public IActionResult AccessDenied()
         {
+            _logger.LogWarning("Access Denied.");
             return View();
         }
     }

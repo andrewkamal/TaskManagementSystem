@@ -1,5 +1,72 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model TeamPerformanceDTO
+
 @{
+    ViewBag.Title = "Team Performance";
+    var teams = ViewBag.Teams;
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title my-3">Team Performance</h3>
+                <select id="teamSelect" name="teamId">
+                    <option value="">None selected</option>
+                    @foreach (var team in teams)
+                    {
+                        <option value="@team.Id">@team.Name</option>
+                    }
+                </select>
+            </div>
+            <div class="panel-body">
+                <div class="my-3">
+                    <button id="printBtn">Print</button>
+                    <button id="exportBtn">Export</button>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-striped table-bordered table-hover" id="dataTables-example">
+                        <thead>
+                            <tr>
+                                <th>Team Id</th>
+                                <th>Team Name</th>
+                                <th>Team Memebers</th>
+                                <th>Performance</th>
+                            </tr>
+                        </thead>
+                        @if (Model != null)
+                        {
+                            <tr>
+                                <td>@Model.Team.Id</td>
+                                <td>@Model.Team.Name</td>
+                                <td>@Model.TotalMembers</td>
+                                <td>@Model.Performance</td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.getElementById('teamSelect').addEventListener('change', function () {
+            var teamId = this.value;
+            if (teamId) {
+                window.location.href = '@Url.Action("TeamPerformance", "Report")?id=' + teamId;
+            }
+        });
+
+        document.getElementById('printBtn').addEventListener('click', function () {
+            window.print();
+        });
+
+        document.getElementById('exportBtn').addEventListener('click', function () {
+            var table = document.getElementById('dataTables-example');
+            var wb = XLSX.utils.table_to_book(table, { sheet: "Sheet 1" });
+            XLSX.writeFile(wb, 'TeamPerformance.xlsx');
+        });
+    </script>
 }

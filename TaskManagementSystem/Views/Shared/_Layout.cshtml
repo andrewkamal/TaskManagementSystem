@@ -12,6 +12,8 @@
     <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
     <script src="~/lib/bootstrap/js/bootstrap.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.debug.js"></script>
+    <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
 </head>
 <body>
     <div class="container">
@@ -52,12 +54,12 @@
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Reports</a>
                             <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                                <a class="dropdown-item" asp-controller="Report" asp-action="ListUsers">User Productivity</a>
-                                <a class="dropdown-item" asp-controller="Report" asp-action="ListRoles">Users Productivity</a>
-                                <a class="dropdown-item" asp-controller="Report" asp-action="ListTeams">User Tasks</a>
-                                <a class="dropdown-item" asp-controller="Report" asp-action="ListTeams">Users Tasks</a>
-                                <a class="dropdown-item" asp-controller="Report" asp-action="ListTeams">Team Performance</a>
-                                <a class="dropdown-item" asp-controller="Report" asp-action="ListTeams">Teams Performance</a>
+                                <a class="dropdown-item" asp-controller="Report" asp-action="UserProductivity">User Productivity</a>
+                                <a class="dropdown-item" asp-controller="Report" asp-action="UsersProductivity">Users Productivity</a>
+                                <a class="dropdown-item" asp-controller="Report" asp-action="UserTaskCompletion">User Tasks</a>
+                                <a class="dropdown-item" asp-controller="Report" asp-action="UsersTaskCompletion">Users Tasks</a>
+                                <a class="dropdown-item" asp-controller="Report" asp-action="TeamPerformance">Team Performance</a>
+                                <a class="dropdown-item" asp-controller="Report" asp-action="TeamsPerformance">Teams Performance</a>
                             </div>
                         </li>
                     }
