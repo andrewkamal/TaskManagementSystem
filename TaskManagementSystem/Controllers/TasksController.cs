@@ -221,6 +221,7 @@ namespace TaskManagementSystem.Controllers
             return View(tasks);
         }
         [HttpGet]
+        [Authorize(Roles = "Admin,Lead")]
         public IActionResult All()
         {
             if(User.IsInRole("Admin"))
